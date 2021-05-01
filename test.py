@@ -65,6 +65,10 @@ if not os.path.exists('output/A'):
     os.makedirs('output/A')
 if not os.path.exists('output/B'):
     os.makedirs('output/B')
+if not os.path.exists('output/reconA'):
+    os.makedirs('output/reconA')
+if not os.path.exists('output/reconB'):
+    os.makedirs('output/reconB')
 
 for i, batch in enumerate(dataloader):
     # Set model input
@@ -78,6 +82,14 @@ for i, batch in enumerate(dataloader):
     # Save image files
     save_image(fake_A, 'output/A/%04d.png' % (i+1))
     save_image(fake_B, 'output/B/%04d.png' % (i+1))
+
+    recon_A = 0.5*(netG_B2A(fake_B).data + 1.0)
+    recon_B = 0.5*(netG_A2B(fake_A).data + 1.0)
+
+    # Save image files
+    save_image(recon_A, 'output/reconA/%04d.png' % (i+1))
+    save_image(recon_B, 'output/reconB/%04d.png' % (i+1))
+
 
     sys.stdout.write('\rGenerated images %04d of %04d' % (i+1, len(dataloader)))
 
