@@ -57,12 +57,12 @@ def perform_inference(dataroot="/content/sketchy/", A2B=True, B2A=False,\
         if A2B:
             real_A = Variable(input_A.copy_(batch['A']))
             fake_B = 0.5*(netG_A2B(real_A).data + 1.0)
-            save_image(fake_A, 'output/A/%04d.png' % (i+1))
+            save_image(fake_B, 'output/B/%04d.png' % (i+1))
 
         if B2A:
             real_B = Variable(input_B.copy_(batch['B']))
             fake_A = 0.5*(netG_B2A(real_B).data + 1.0)
-            save_image(fake_B, 'output/B/%04d.png' % (i+1))
+            save_image(fake_A, 'output/A/%04d.png' % (i+1))
 
         sys.stdout.write('\rGenerated images %04d of %04d' % (i+1, len(dataloader)))
 
