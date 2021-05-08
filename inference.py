@@ -105,7 +105,7 @@ def perform_single_inference(filepath="/content/sketchy/", output_png_path="/con
         input_A = transforms_(image).unsqueeze(0)
 
         if cuda:
-            input_A.cuda()
+            input_A = input_A.cuda()
 
         real_A = Variable(input_A.detach().clone())
         fake_B = 0.5*(netG_A2B(real_A).data + 1.0)
@@ -122,7 +122,7 @@ def perform_single_inference(filepath="/content/sketchy/", output_png_path="/con
         input_B = transforms_(image).unsqueeze(0)
 
         if cuda:
-            input_B.cuda()
+            input_B = input_B.cuda()
         
         real_B = Variable(input_B.detach().clone())
         fake_A = 0.5*(netG_B2A(real_B).data + 1.0)
