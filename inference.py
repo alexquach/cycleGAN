@@ -81,8 +81,10 @@ def perform_single_inference(filepath="/content/sketchy/", output_png_path="/con
     Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
     image = torchvision.io.read_image(filepath).float()
     
-    transforms_ = [ transforms.ToTensor(),
-                    transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)) ]
+    transforms_ = torch.nn.Sequential(
+        transforms.Resize(256),
+        transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)),
+    )
     if A2B:
         netG_A2B = Generator(input_nc, output_nc)
         if cuda:
