@@ -85,30 +85,54 @@ def perform_single_inference(filepath="/content/sketchy/", output_png_path="/con
         transforms.Resize(256),
         transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)),
     )
-    if A2B:
+
+    if A2B or B2B2A or A2B2B:
         netG_A2B = Generator(input_nc, output_nc)
-        if cuda:
-            netG_A2B.cuda()
         netG_A2B.load_state_dict(torch.load(generator_A2B))
         netG_A2B.eval()
-        input_A = transforms_(image).unsqueeze(0).cuda()
-        real_A = Variable(input_A.detach().clone())
-        fake_B = 0.5*(netG_A2B(real_A).data + 1.0)
-        save_image(fake_B, output_png_path)
-
-        return fake_B, output_png_path
-
-    if B2A:
-        netG_B2A = Generator(output_nc, input_nc)
         if cuda:
-            netG_B2A.cuda()
+            netG_A2B.cuda()
+
+    if B2A or B2B2A or A2B2B:
+        netG_B2A = Generator(output_nc, input_nc)
         netG_B2A.load_state_dict(torch.load(generator_B2A))
         netG_B2A.eval()
-        input_B = transforms_(image).unsqueeze(0).cuda()
+        if cuda:
+            netG_B2A.cuda()
+
+
+    if A2B or A2B2A:
+        input_A = transforms_(image).unsqueeze(0)
+
+        if cuda:
+            input_A.cuda()
+
+        real_A = Variable(input_A.detach().clone())
+        fake_B = 0.5*(netG_A2B(real_A).data + 1.0)
+
+        if A2B2A:
+            fake_A = 0.5*(netG_B2A(fake_B).data + 1.0)
+            save_image(fake_A, output_png_path)
+            return fake_A, output_png_path
+
+        save_image(fake_B, output_png_path)
+        return fake_B, output_png_path
+
+    if B2A or B2A2B:
+        input_B = transforms_(image).unsqueeze(0)
+
+        if cuda:
+            input_B.cuda()
+        
         real_B = Variable(input_B.detach().clone())
         fake_A = 0.5*(netG_B2A(real_B).data + 1.0)
-        save_image(fake_A, output_png_path)
+         
+        if B2A2B:
+            fake_B = 0.5*(netG_A2B(fake_A).data + 1.0)
+            save_image(fake_B, output_png_path)
+            return fake_B, output_png_path
 
+        save_image(fake_A, output_png_path)
         return fake_A, output_png_path
 
     sys.stdout.write('\rGenerated images')
