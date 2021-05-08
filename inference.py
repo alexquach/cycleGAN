@@ -86,14 +86,14 @@ def perform_single_inference(filepath="/content/sketchy/", output_png_path="/con
         transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)),
     )
 
-    if A2B or B2B2A or A2B2B:
+    if A2B or B2A2B or A2B2A:
         netG_A2B = Generator(input_nc, output_nc)
         netG_A2B.load_state_dict(torch.load(generator_A2B))
         netG_A2B.eval()
         if cuda:
             netG_A2B.cuda()
 
-    if B2A or B2B2A or A2B2B:
+    if B2A or B2A2B or A2B2A:
         netG_B2A = Generator(output_nc, input_nc)
         netG_B2A.load_state_dict(torch.load(generator_B2A))
         netG_B2A.eval()
